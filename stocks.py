@@ -11,27 +11,28 @@ higherClose= df.index[df.Close > df.Open]
 lowerClose= df.index[df.Close < df.Open]
 
 
-def inc_dec(o, c):
-    if c > o:
+def inc_dec(c, o):
+    if o > c:
         value="Increase"
-    elif c < o:
+    elif o < c:
         value="Decrease"
     else:
         value="Equal"
     return value
 
-df["Status"]=[inc_dec(o,c) for o,c in zip(df.Open, df.Close)]
-df["Middle"]=[(df.Open+df.Close)/2]
+df["Status"]=[inc_dec(c,o) for c,o in zip(df.Open, df.Close)]
+df["Middle"]=(df.Open+df.Close)/2
+df["Height"]=abs(df.Close-df.Open)
 
 print(df)
 p = figure(x_axis_type='datetime', width=1000, height=500, title="Stock Table")
 
 hours = 12*60*60*1000
 
-p.rect(df.index[df.Close > df.Open],(df.Open +df.Close)/2, hours,abs(df.Open-df.Close),
+p.rect(df.index[df.Status == "Increase"],df.Middle[df.Status=="Increase"], hours,df.Height[df.Status=="Increase"],
  fill_color="green", line_color="black")
 
-p.rect(df.index[df.Close < df.Open],(df.Open +df.Close)/2, hours,abs(df.Open-df.Close),
+p.rect(df.index[df.Status == "Decrease"],df.Middle[df.Status=="Decrease"], hours,df.Height[df.Status=="Decrease"],
  fill_color="red", line_color="black")
 
 
